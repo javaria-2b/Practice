@@ -1,21 +1,19 @@
-import Link from "next/link";
 import React from "react";
+import Link from "next/link";
+import Image from "next/image";
 import {
   Card,
   CardContent,
   CardDescription,
   CardTitle,
 } from "@/components/ui/card";
-import Image from "next/image";
-import { Badge } from "@/components/ui/badge"
-import dayjs from 'dayjs'
+import { Badge } from "@/components/ui/badge";
+import dayjs from "dayjs";
 
 const getBlogs = async () => {
   const res = await fetch(
-    "https://api.slingacademy.com/v1/sample-data/blog-posts?offset=5&limit=150"
+    "https://api.slingacademy.com/v1/sample-data/blog-posts?offset=0&limit=50"
   );
-  //   console.log("getBlogs", res.statusText);
-
   if (!res.ok) {
     throw new Error("Could not retrieve blog posts");
   }
@@ -26,13 +24,13 @@ async function BlogsPage() {
   const blogs = await getBlogs();
 
   return (
-    <div className="p-10 flex flex-col">
+    <div className="p-10 flex flex-col justify-center items-center">
       {blogs.blogs.length > 0 ? (
         <div className="flex gap-5 flex-wrap">
           {blogs.blogs.map((post: any) => (
             <Link href={`/blogs/${post.id}`} key={post.id}>
-              <Card className="p-1 space-y-1">
-              <CardContent className="max-w-xs">
+              <Card>
+                <CardContent className="max-w-xs flex flex-col gap-1 p-4">
                   <Image
                     src={post.photo_url}
                     alt={post.title}
@@ -40,19 +38,17 @@ async function BlogsPage() {
                     height={400}
                     className="object-cover"
                   />
-                </CardContent>
-                <div  className="max-w-xs flex flex-col gap-1 p-4">
-                  
-                <CardTitle> {post.title}</CardTitle>
-                <CardDescription>{post.description}</CardDescription>
-<div className="flex justify-between items-center">
-
-<Badge variant="default" className="capitalize">{post.category}</Badge>
-<p className="font-bold">{post.created_at}</p>
-</div>
-
+                  <CardTitle>{post.title}</CardTitle>
+                  <CardDescription>{post.description}</CardDescription>
+                  <div className="flex justify-between items-center">
+                    <Badge variant="default" className="capitalize">
+                      {post.category}
+                    </Badge>
+                    <p className="font-bold">
+                      Posted:{dayjs(post.created_at).format("DD-MMM-YY")}
+                    </p>
                   </div>
-              
+                </CardContent>
               </Card>
             </Link>
           ))}
